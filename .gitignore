@@ -1,0 +1,13 @@
+/dist/
+/db/.env
+/node_modules/
+/.env
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/.gitignore
+/.idea/aws.xml
+/.idea/dataSources.xml
+/.idea/jsLibraryMappings.xml
+/.idea/modules.xml
+/.idea/mssql-raw-client.iml
+/.idea/sqldialects.xml
