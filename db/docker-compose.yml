@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    hostname: ${MSSQL_HOST}
+    restart: always
+    user: root
+    labels :
+      - db
+      - mssql
+    ports:
+      - "${MSSQL_PORT}:1433"
+    environment:
+      - ACCEPT_EULA=${ACCEPT_EULA}
+      - MSSQL_PID=${MSSQL_PID}
+      - MSSQL_PORT=${MSSQL_PORT}
+      - MSSQL_USER=${MSSQL_USER}
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_HOST=${MSSQL_HOST}
+      - MSSQL_DATABASE=${MSSQL_DATABASE}
+    volumes :
+      - mssql_data:/var/opt/mssql
+    networks :
+      - mssql-network
+    healthcheck :
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -C -Q 'SELECT 1' || exit 1"]
+      interval : 10s
+      retries : 10
+      start_period : 10s
+      timeout : 3s
+
+  mssql.configurator :
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+    networks:
+      - mssql-network
+    depends_on:
+      mssql:
+        condition : service_healthy
+    command: >
+      bash -c '
+      /opt/mssql-tools18/bin/sqlcmd -S ${MSSQL_HOST} -U sa -P ${MSSQL_SA_PASSWORD} -v DBNAME=${MSSQL_DATABASE} -v DBUSER=${MSSQL_USER} -v DBPASSWORD=${MSSQL_PASSWORD} -C -d master -i docker-entrypoint-initdb.d/init-db.sql;
+      echo "All done!";
+      '
+
+
+volumes:
+  mssql_data:
+    driver: local
+
+networks:
+  mssql-network:
+    driver: bridge
+    labels:
+      - db
+      - mssql
