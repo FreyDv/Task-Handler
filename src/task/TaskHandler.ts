@@ -50,7 +50,7 @@ export class TaskHandler {
             }
         }
 
-        const promises = this.executionQueue.map((taskId) => {
+        const promises = this.executionQueue.reverse().map((taskId) => {
             return new Promise(async (resolve, reject) => {
                 try {
                     // here I could get payload form Db related each task.
