@@ -1,5 +1,5 @@
 ## Description
-Template raw mssql client on node.js
+Template raw mssql client on node.js And solution for task stored into [TASK.md](TASK.md)
 
 ## Installation
 
@@ -81,6 +81,9 @@ Searching for circular dependencies can be implemented at different levels, such
 2.	Before execution – we can retrieve the entire task flow from the database, including all child tasks. Using a modified DFS, we can detect any already existing vertices in the stack, which keeps track of all previous parent-child relationships.
 •	If no circular dependency is detected, we already have the entire execution stack in memory with all the tasks that need to be processed.
 3.	During runtime execution – similar to the second approach, but instead of preloading all tasks at once, we fetch them incrementally from the database in batches of 10 to 20 (or another appropriate number). This helps reduce memory usage while continuing task execution until a circular dependency is detected. For me, this seems to be the best approach.
+4.  Also MS SQL has specific graph Node api That will feat better for this task.
+5.  Better to use graph DataBase if we will have a lot of Task in DB.
+6.  Also good idea store plan in DB and on each updated insert parts of execute plan in needed place.
 
 At the moment, I do not know the real use case for this data and lack analytical insights that would allow me to determine the best solution based on:
 •	The average depth of dependencies.
